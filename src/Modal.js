@@ -42,9 +42,9 @@ function Modal({children, initialFocusID, ...props}) {
     }
 
     useEffect(() => {
-        const initialFocusID = props.initialFocusID || props["aria-describedby"];
-        if (initialFocusID)  {
-            const initialFocusElement = modelElement.current.querySelectorAll('#' + initialFocusID)[0];
+        const initialID = initialFocusID || props["aria-describedby"];
+        if (initialID)  {
+            const initialFocusElement = modelElement.current.querySelectorAll('#' + initialID)[0];
             if (initialFocusElement) {
                 initialFocusElement.focus();
             }
