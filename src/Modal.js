@@ -5,8 +5,10 @@ import ReactDOM from 'react-dom'
  * otherwise it will focus on props.initialFocusID element. If both props are not provided,
  * it will search the first element in the modal and focus on that!!!!*/
 
-function Modal({children, initialFocusID, ...props}) {
+function Modal({initialFocusID, handleEscapeEvent=(()=>{}), ...props}) {
     const modelElement = useRef();
+
+    // focus trap hidden element
     const focusStartElement = useRef();
     const focusEndElement = useRef();
 
@@ -22,7 +24,7 @@ function Modal({children, initialFocusID, ...props}) {
                 lastFocusElement.current = focusList[focusList.length - 1];
                 lastFocusElement.current.focus();
             } else {
-                // @todo
+                // @todo no focusable element
             }
         }
     }
@@ -36,11 +38,12 @@ function Modal({children, initialFocusID, ...props}) {
                 firstFocusElement.current = focusList[0];
                 firstFocusElement.current.focus();
             } else {
-                // @todo
+                // @todo no focusable element
             }
         }
     }
 
+    // handle initial focus
     useEffect(() => {
         const initialID = initialFocusID || props["aria-describedby"];
         if (initialID)  {
@@ -52,12 +55,25 @@ function Modal({children, initialFocusID, ...props}) {
             focusFirstElement();
         }
     }, [])
-    
+
+    // handle escape key
+    useEffect(() => {
+        function handleEscapeKey(event) {
+            if (event.keyCode === 27) {
+                handleEscapeEvent(event);
+            }
+        }
+        document.addEventListener('keydown', handleEscapeKey);
+        return () => {
+            document.removeEventListener('keydown', handleEscapeKey)
+        }
+    }, [])
+
     return  (
         <>
             <div tabIndex={0} ref={focusStartElement} onFocus={focusOnLastElement} aria-hidden></div>
                 <div ref={modelElement} role={'dialog'} aria-modal {...props}>
-                    {children}
+                    {props.children}
                 </div>
             <div tabIndex={0} ref={focusEndElement} onFocus={focusFirstElement} aria-hidden></div>
         </>
@@ -86,7 +102,6 @@ function ModalDemo() {
             openButton1Element.current.focus();
         }
     }, [modal1State])
-
 
     //////// demo 2 state
     const [modal2State, setModal2State] = useState(false);
@@ -122,10 +137,10 @@ function ModalDemo() {
             <button onClick={() => setModal1State(true)} ref={openButton1Element}>Open demo modal 1</button>
             {
                 modal1State? ReactDOM.createPortal(
-                    <Modal aria-labelledby="demo_title_1">
+                    <Modal aria-labelledby="demo_title_1" handleEscapeEvent={() => setModal1State(false)}>
                         <h2 id="demo_title_1">demo modal 1 focus trap</h2>
                         <button onClick={() => setModal1State(false)}>close modal</button>
-                        <button>button 1</button>
+                        <button>nest modal demo (todo)</button>
                         <button>button 2</button>
                         <button>button 3</button>
                         <button>button 4</button>
@@ -137,7 +152,7 @@ function ModalDemo() {
             <button onClick={() => setModal2State(true)} ref={openButton2Element}>Open demo modal 2</button>
             {
                 modal2State? ReactDOM.createPortal(
-                    <Modal aria-labelledby="demo_title_2" aria-describedby="descrtion_id">
+                    <Modal aria-labelledby="demo_title_2" aria-describedby="descrtion_id" handleEscapeEvent={() => setModal2State(false)}>
                         <h2 id="demo_title_2">demo modal 2 with description text</h2>
                         <p tabIndex={-1} id="descrtion_id">
                             Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc sagittis nunc a nisi blandit, non blandit risus maximus. Maecenas laoreet est quam, ac sollicitudin sem consectetur nec. Aenean accumsan blandit felis quis interdum. Fusce pellentesque luctus pharetra. Nullam efficitur nulla sit amet pellentesque cursus. Ut blandit dictum neque, ut laoreet sem accumsan sit amet. Vestibulum imperdiet libero mi, hendrerit lacinia nunc euismod quis. Curabitur consequat, tortor ac tempor euismod, lacus mi vulputate libero, ac consequat lacus justo vitae ex. Vivamus eu orci non sem ultricies faucibus a vel libero. Ut purus orci, ultrices ut mi at, finibus bibendum nibh. Vivamus vulputate enim interdum dui tristique euismod. Donec quis lobortis sem, eget commodo lorem. Nunc sapien dolor, rhoncus et vehicula elementum, convallis sit amet turpis.
@@ -152,7 +167,7 @@ function ModalDemo() {
             {
                 modal3State? ReactDOM.createPortal(
                     <div style={backdropInlineStyle} >
-                        <Modal aria-labelledby="demo_title_3" style={modalInlineStyle}>
+                        <Modal aria-labelledby="demo_title_3" style={modalInlineStyle} handleEscapeEvent={() => setModal3State(false)}>
                             <h2 id="demo_title_3">demo modal 3</h2>
                             <button onClick={() => setModal3State(false)}>close modal</button>
                         </Modal>
@@ -165,7 +180,7 @@ function ModalDemo() {
             {
                 modal4State? ReactDOM.createPortal(
                     <div style={backdropInlineStyle} >
-                        <Modal style={modalInlineStyle} aria-labelledby="demo_title_4" initialFocusID={"demo4-close-id"}>
+                        <Modal style={modalInlineStyle} aria-labelledby="demo_title_4" initialFocusID={"demo4-close-id"} handleEscapeEvent={() => setModal4State(false)}>
                             <h2 id="demo_title_3">demo modal 4</h2>
                             <button>button 1</button>
                             <button>button 2</button>
