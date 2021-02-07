@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom'
  * otherwise it will focus on props.initialFocusID element. If both props are not provided,
  * it will search the first element in the modal and focus on that!!!!*/
 
-function Modal(props) {
+function Modal({children, initialFocusID, ...props}) {
     const modelElement = useRef();
     const focusStartElement = useRef();
     const focusEndElement = useRef();
@@ -57,7 +57,7 @@ function Modal(props) {
         <>
             <div tabIndex={0} ref={focusStartElement} onFocus={focusOnLastElement} aria-hidden></div>
                 <div ref={modelElement} role={'dialog'} aria-modal {...props}>
-                    {props.children}
+                    {children}
                 </div>
             <div tabIndex={0} ref={focusEndElement} onFocus={focusFirstElement} aria-hidden></div>
         </>
