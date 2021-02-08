@@ -1,11 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react'
 import ReactDOM from 'react-dom'
 
-/** modal will first focus on the props["aria-describedby"] element if provided, 
- * otherwise it will focus on props.initialFocusID element. If both props are not provided,
- * it will search the first element in the modal and focus on that!!!!*/
-
-function Modal({initialFocusID, handleEscapeEvent=(()=>{}), ...props}) {
+/** initial-focus priority: initialFocusRef >> initialFocusID >> element[aria-describedby] >> first focusable element */
+function Modal({initialFocusRef, initialFocusID, handleEscapeEvent=(()=>{}), ...props}) {
     const modelElement = useRef();
 
     // focus trap hidden element
@@ -45,7 +42,13 @@ function Modal({initialFocusID, handleEscapeEvent=(()=>{}), ...props}) {
 
     // handle initial focus
     useEffect(() => {
-        const initialID = initialFocusID || props["aria-describedby"];
+        const initialRef = initialFocusRef;
+        if (initialRef && initialRef.current) {
+            initialRef.current.focus();
+            return;
+        }
+
+        const initialID = props["aria-describedby"] || initialFocusID;
         if (initialID)  {
             const initialFocusElement = modelElement.current.querySelectorAll('#' + initialID)[0];
             if (initialFocusElement) {
@@ -129,6 +132,16 @@ function ModalDemo() {
              openButton4Element.current.focus();
          }
      }, [modal4State])
+
+    //////// demo 5 state
+    const [modal5State, setModal5State] = useState(false);
+    const openButton5Element = useRef();
+    const focusRef = useRef();
+    useEffect(() => {
+        if (!modal5State) {
+            openButton5Element.current.focus();
+        }
+    }, [modal5State])
     
 
     return(
@@ -187,6 +200,21 @@ function ModalDemo() {
                             <button>button 3</button>
                             <button>button 4</button>
                             <button onClick={() => setModal4State(false)} id="demo4-close-id">close modal</button>
+                        </Modal>
+                    </div>, document.getElementsByTagName("body")[0])
+                    
+                : null
+            }
+
+        {/** demo 5 with ref */}
+              <button onClick={() => setModal5State(true)} ref={openButton5Element}>Open demo modal 5</button>
+            {
+                modal5State? ReactDOM.createPortal(
+                    <div style={backdropInlineStyle} >
+                        <Modal aria-labelledby="demo_title_5" style={modalInlineStyle} handleEscapeEvent={() => setModal5State(false)} initialFocusRef={focusRef}>
+                            <h2 id="demo_title_5">demo modal 5</h2>
+                            <input />
+                            <button ref={focusRef} onClick={() => setModal5State(false)}>close modal</button>
                         </Modal>
                     </div>, document.getElementsByTagName("body")[0])
                     
