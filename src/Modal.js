@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react'
 import ReactDOM from 'react-dom'
 
-/** initial-focus priority: initialFocusRef >> initialFocusID >> element[aria-describedby] >> first focusable element */
-function Modal({initialFocusRef, initialFocusID, handleClose=(()=>{}), ...props}) {
+/** initial-focus priority: initialFocusRef >> element[aria-describedby] >> first focusable element */
+function Modal({initialFocusRef, handleClose=(()=>{}), ...props}) {
     const modalElement = useRef();
 
     // focus trap hidden element
@@ -50,7 +50,7 @@ function Modal({initialFocusRef, initialFocusID, handleClose=(()=>{}), ...props}
         }
 
         // handle focus id props
-        const initialID = props["aria-describedby"] || initialFocusID;
+        const initialID = props["aria-describedby"];
         if (initialID)  {
             const initialFocusElement = modalElement.current.querySelectorAll('#' + initialID)[0];
             if (initialFocusElement) {
@@ -61,7 +61,7 @@ function Modal({initialFocusRef, initialFocusID, handleClose=(()=>{}), ...props}
         }
     }, [])
 
-    // handle escape key
+    // handle escape key and click outside
     useEffect(() => {
         function handleEscapeKey(event) {
             if (event.keyCode === 27) {
@@ -136,6 +136,7 @@ function ModalDemo() {
      //////// demo 4 state
      const [modal4State, setModal4State] = useState(false);
      const openButton4Element = useRef();
+     const demo4CloseElement = useRef();
      useEffect(() => {
          if (!modal4State) {
              openButton4Element.current.focus();
@@ -202,13 +203,13 @@ function ModalDemo() {
             {
                 modal4State? ReactDOM.createPortal(
                     <div style={backdropInlineStyle} >
-                        <Modal style={modalInlineStyle} aria-labelledby="demo_title_4" initialFocusID={"demo4-close-id"} handleClose={() => setModal4State(false)}>
+                        <Modal style={modalInlineStyle} aria-labelledby="demo_title_4" initialFocusRef={demo4CloseElement} handleClose={() => setModal4State(false)}>
                             <h2 id="demo_title_3">demo modal 4</h2>
                             <button>button 1</button>
                             <button>button 2</button>
                             <button>button 3</button>
                             <button>button 4</button>
-                            <button onClick={() => setModal4State(false)} id="demo4-close-id">close modal</button>
+                            <button onClick={() => setModal4State(false)} ref={demo4CloseElement}>close modal</button>
                         </Modal>
                     </div>, document.getElementsByTagName("body")[0])
                     
