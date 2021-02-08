@@ -61,6 +61,7 @@ function Modal({initialFocusRef, handleClose=(()=>{}), ...props}) {
         }
     }, [])
 
+    const mousedownOutside = useRef(false);
     // handle escape key and click outside
     useEffect(() => {
         function handleEscapeKey(event) {
@@ -68,15 +69,22 @@ function Modal({initialFocusRef, handleClose=(()=>{}), ...props}) {
                 handleClose(event);
             }
         }
-        function handleClickOutside(event) {
+        function handleMousedownOutside(event) {
             if (modalElement.current && !modalElement.current.contains(event.target)) {
+                mousedownOutside.current = true;
+            }
+        }
+        function handleMouseupOutside(event) {
+            if (modalElement.current && !modalElement.current.contains(event.target) && mousedownOutside.current) {
                 handleClose(event)
             }
         }
-        document.addEventListener('mousedown', handleClickOutside, true);
+        document.addEventListener('mousedown', handleMousedownOutside, true);
+        document.addEventListener('mouseup', handleMouseupOutside, true)
         document.addEventListener('keydown', handleEscapeKey);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside, true);
+            document.removeEventListener('mousedown', handleMousedownOutside, true);
+            document.removeEventListener('mouseup', handleMouseupOutside, true)
             document.removeEventListener('keydown', handleEscapeKey)
         }
     }, [])
