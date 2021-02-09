@@ -1,6 +1,6 @@
 import React from 'react'
-import {ModalDemo } from './Modal';
-import DateInput from './DateInput';
+import {ModalDemo } from './react/Modal';
+import DateInput from './react/DateInput';
 import "./App.css"
 
 function App() {
