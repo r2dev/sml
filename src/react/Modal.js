@@ -65,7 +65,7 @@ function Modal({initialFocusRef, handleClose=(()=>{}), ...props}) {
     // handle escape key and click outside
     useEffect(() => {
         function handleEscapeKey(event) {
-            if (event.keyCode === 27) {
+            if (event.key == 'Escape' || event.key == 'Esc' || event.keyCode === 27) {
                 handleClose(event);
             }
         }
@@ -133,33 +133,24 @@ function ModalDemo() {
     }, [modal2State])
 
      //////// demo 3 state
-     const [modal3State, setModal3State] = useState(false);
-     const openButton3Element = useRef();
-     useEffect(() => {
-         if (!modal3State) {
-             openButton3Element.current.focus();
-         }
-     }, [modal3State])
-
-     //////// demo 4 state
-     const [modal4State, setModal4State] = useState(false);
+     const [modal3State, setmodal3State] = useState(false);
      const openButton4Element = useRef();
      const demo4CloseElement = useRef();
      useEffect(() => {
-         if (!modal4State) {
+         if (!modal3State) {
              openButton4Element.current.focus();
          }
-     }, [modal4State])
+     }, [modal3State])
 
-    //////// demo 5 state
-    const [modal5State, setModal5State] = useState(false);
+    //////// demo 4 state
+    const [modal4State, setmodal4State] = useState(false);
     const openButton5Element = useRef();
     const focusRef = useRef();
     useEffect(() => {
-        if (!modal5State) {
+        if (!modal4State) {
             openButton5Element.current.focus();
         }
-    }, [modal5State])
+    }, [modal4State])
     
 
     return(
@@ -168,14 +159,16 @@ function ModalDemo() {
             <button onClick={() => setModal1State(true)} ref={openButton1Element}>Open demo modal 1</button>
             {
                 modal1State? ReactDOM.createPortal(
-                    <Modal aria-labelledby="demo_title_1" handleClose={() => setModal1State(false)}>
-                        <h2 id="demo_title_1">demo modal 1 focus trap</h2>
-                        <button onClick={() => setModal1State(false)}>close modal</button>
-                        <button>nest modal demo (todo)</button>
-                        <button>button 2</button>
-                        <button>button 3</button>
-                        <button>button 4</button>
-                    </Modal>, document.getElementsByTagName("body")[0])
+                    <div style={backdropInlineStyle}>
+                        <Modal aria-labelledby="demo_title_1" handleClose={() => setModal1State(false)} style={modalInlineStyle}>
+                            <h2 id="demo_title_1">demo modal 1 focus trap</h2>
+                            <button onClick={() => setModal1State(false)}>close modal</button>
+                            <button>nest modal demo (todo)</button>
+                            <button>button 2</button>
+                            <button>button 3</button>
+                            <button>button 4</button>
+                        </Modal>
+                    </div>, document.getElementsByTagName("body")[0])
                 : null
             }
 
@@ -183,41 +176,31 @@ function ModalDemo() {
             <button onClick={() => setModal2State(true)} ref={openButton2Element}>Open demo modal 2</button>
             {
                 modal2State? ReactDOM.createPortal(
-                    <Modal aria-labelledby="demo_title_2" aria-describedby="descrtion_id" handleClose={() => setModal2State(false)}>
-                        <h2 id="demo_title_2">demo modal 2 with description text</h2>
-                        <p tabIndex={-1} id="descrtion_id">
-                            Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc sagittis nunc a nisi blandit, non blandit risus maximus. Maecenas laoreet est quam, ac sollicitudin sem consectetur nec. Aenean accumsan blandit felis quis interdum. Fusce pellentesque luctus pharetra. Nullam efficitur nulla sit amet pellentesque cursus. Ut blandit dictum neque, ut laoreet sem accumsan sit amet. Vestibulum imperdiet libero mi, hendrerit lacinia nunc euismod quis. Curabitur consequat, tortor ac tempor euismod, lacus mi vulputate libero, ac consequat lacus justo vitae ex. Vivamus eu orci non sem ultricies faucibus a vel libero. Ut purus orci, ultrices ut mi at, finibus bibendum nibh. Vivamus vulputate enim interdum dui tristique euismod. Donec quis lobortis sem, eget commodo lorem. Nunc sapien dolor, rhoncus et vehicula elementum, convallis sit amet turpis.
-                        </p>
-                        <button onClick={() => setModal2State(false)}>close modal</button>
-                    </Modal>, document.getElementsByTagName("body")[0])
+                    <div style={backdropInlineStyle}>
+                        <Modal aria-labelledby="demo_title_2" aria-describedby="descrtion_id" handleClose={() => setModal2State(false)} style={modalInlineStyle}>
+                            <h2 id="demo_title_2">demo modal 2 with description text</h2>
+                            <p tabIndex={-1} id="descrtion_id">
+                                Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc sagittis nunc a nisi blandit, non blandit risus maximus. Maecenas laoreet est quam, ac sollicitudin sem consectetur nec. Aenean accumsan blandit felis quis interdum. Fusce pellentesque luctus pharetra. Nullam efficitur nulla sit amet pellentesque cursus. Ut blandit dictum neque, ut laoreet sem accumsan sit amet. Vestibulum imperdiet libero mi, hendrerit lacinia nunc euismod quis. Curabitur consequat, tortor ac tempor euismod, lacus mi vulputate libero, ac consequat lacus justo vitae ex. Vivamus eu orci non sem ultricies faucibus a vel libero. Ut purus orci, ultrices ut mi at, finibus bibendum nibh. Vivamus vulputate enim interdum dui tristique euismod. Donec quis lobortis sem, eget commodo lorem. Nunc sapien dolor, rhoncus et vehicula elementum, convallis sit amet turpis.
+                            </p>
+                            <button onClick={() => setModal2State(false)}>close modal</button>
+                        </Modal>
+                    </div>, document.getElementsByTagName("body")[0])
                 : null
             }
 
-        {/** demo 3 with custom style */}
-            <button onClick={() => setModal3State(true)} ref={openButton3Element}>Open demo modal 3</button>
+      
+        {/** demo 4 with initial focus element */}
+            <button onClick={() => setmodal3State(true)} ref={openButton4Element}>Open demo modal 3</button>
             {
                 modal3State? ReactDOM.createPortal(
                     <div style={backdropInlineStyle} >
-                        <Modal aria-labelledby="demo_title_3" style={modalInlineStyle} handleClose={() => setModal3State(false)}>
+                        <Modal aria-labelledby="demo_title_4" initialFocusRef={demo4CloseElement} handleClose={() => setmodal3State(false)} style={modalInlineStyle}>
                             <h2 id="demo_title_3">demo modal 3</h2>
-                            <button onClick={() => setModal3State(false)}>close modal</button>
-                        </Modal>
-                    </div>, document.getElementsByTagName("body")[0])
-                    
-                : null
-            }
-        {/** demo 4 with initial focus element */}
-            <button onClick={() => setModal4State(true)} ref={openButton4Element}>Open demo modal 4</button>
-            {
-                modal4State? ReactDOM.createPortal(
-                    <div style={backdropInlineStyle} >
-                        <Modal style={modalInlineStyle} aria-labelledby="demo_title_4" initialFocusRef={demo4CloseElement} handleClose={() => setModal4State(false)}>
-                            <h2 id="demo_title_3">demo modal 4</h2>
                             <button>button 1</button>
                             <button>button 2</button>
                             <button>button 3</button>
                             <button>button 4</button>
-                            <button onClick={() => setModal4State(false)} ref={demo4CloseElement}>close modal</button>
+                            <button onClick={() => setmodal3State(false)} ref={demo4CloseElement}>close modal</button>
                         </Modal>
                     </div>, document.getElementsByTagName("body")[0])
                     
@@ -225,14 +208,14 @@ function ModalDemo() {
             }
 
         {/** demo 5 with ref */}
-              <button onClick={() => setModal5State(true)} ref={openButton5Element}>Open demo modal 5</button>
+              <button onClick={() => setmodal4State(true)} ref={openButton5Element}>Open demo modal 4</button>
             {
-                modal5State? ReactDOM.createPortal(
+                modal4State? ReactDOM.createPortal(
                     <div style={backdropInlineStyle} >
-                        <Modal aria-labelledby="demo_title_5" style={modalInlineStyle} handleClose={() => setModal5State(false)} initialFocusRef={focusRef}>
-                            <h2 id="demo_title_5">demo modal 5</h2>
+                        <Modal aria-labelledby="demo_title_5" handleClose={() => setmodal4State(false)} initialFocusRef={focusRef} style={modalInlineStyle}>
+                            <h2 id="demo_title_5">demo modal 4</h2>
                             <input />
-                            <button ref={focusRef} onClick={() => setModal5State(false)}>close modal</button>
+                            <button ref={focusRef} onClick={() => setmodal4State(false)}>close modal</button>
                         </Modal>
                     </div>, document.getElementsByTagName("body")[0])
                     
