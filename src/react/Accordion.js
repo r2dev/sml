@@ -2,6 +2,11 @@ import React, {useEffect, useRef, useImperativeHandle, forwardRef, createContext
 
 let accordionNextID = 0;
 
+const FocusFlag_Next = 1;
+const FocusFlag_Previous = 2;
+const FocusFlag_First = 3;
+const FocusFlag_Last = 4;
+
 function Accordion({
     defaultExpandedIndex = [0],
     // allow open multiple entries at the same time
@@ -16,14 +21,26 @@ function Accordion({
     const [state, dispatch] = useReducer(internalReducer, {count: 0, refs: {}, opened: defaultExpandedIndex});
     
     // handle search the next ref with next accordion index, allow dynamic add and remove accordion item
-    function handleFocusKey(currentIndex, isNext) {
-        if (isNext) {
-            while (!state.refs[++currentIndex] && currentIndex < state.count) {}
-        } else {
-            while (!state.refs[--currentIndex] && currentIndex > state.count) {}
+    function handleFocusKey(currentIndex, focusFlag) {
+        const initialIndex = currentIndex
+        switch (focusFlag) {
+            case FocusFlag_Next: {
+                while (!state.refs[++currentIndex] && currentIndex < state.count) {}
+            } break;
+            case FocusFlag_Previous: {
+                while (!state.refs[--currentIndex] && currentIndex > state.count) {}
+            } break;
+            case FocusFlag_First: {
+                currentIndex = 0
+            } break;
+            case FocusFlag_Last: {
+                currentIndex = state.count - 1
+            } break;
         }
-        if (state.refs[currentIndex] && state.refs[currentIndex].current) {
-            state.refs[currentIndex].current.focus()
+        if (initialIndex !== currentIndex) {
+            if (state.refs[currentIndex] && state.refs[currentIndex].current) {
+                state.refs[currentIndex].current.focus()
+            }
         }
     }
 
@@ -108,7 +125,6 @@ function AccordionButton({accordionIndex, ...props}, ref) {
     function handleButtonTrigger() {
         handleExpand(accordionIndex);
     }
-
     // arrow key to focus different header, space or enter to expand
     function handleKeyDown(event) {
         const key = event.key;
@@ -116,11 +132,17 @@ function AccordionButton({accordionIndex, ...props}, ref) {
             case 'ArrowLeft':
             case 'ArrowUp': {
                 // focus on previous button
-                handleFocusKey(accordionIndex, false)
+                handleFocusKey(accordionIndex, FocusFlag_Previous)
             } break;
             case 'ArrowDown':
             case 'ArrowRight': {
-                handleFocusKey(accordionIndex, true)
+                handleFocusKey(accordionIndex, FocusFlag_Next)
+            } break;
+            case 'Home': {
+                handleFocusKey(accordionIndex, FocusFlag_First)
+            } break;
+            case 'End': {
+                handleFocusKey(accordionIndex, FocusFlag_Last)
             } break;
             case ' ': {
                 // @todo prevent button default space event
