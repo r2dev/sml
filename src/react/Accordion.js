@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useImperativeHandle, forwardRef, createContext, useContext, useReducer} from 'react'
+import React, { useEffect, useRef, createContext, useContext, useReducer } from 'react'
 
 let accordionNextID = 0;
 
@@ -15,7 +15,6 @@ function Accordion({
     // allow toggle the content
     toggle=false,
     children,
-    ...props
 }) {
     const internalAccordionID = useRef(accordionNextID++);
     const [state, dispatch] = useReducer(internalReducer, {count: 0, refs: {}, opened: defaultExpandedIndex});
@@ -28,7 +27,7 @@ function Accordion({
                 while (!state.refs[++currentIndex] && currentIndex < state.count) {}
             } break;
             case FocusFlag_Previous: {
-                while (!state.refs[--currentIndex] && currentIndex > state.count) {}
+                while (!state.refs[--currentIndex] && currentIndex >= 0) {}
             } break;
             case FocusFlag_First: {
                 currentIndex = 0
@@ -61,9 +60,7 @@ function Accordion({
     return(
         <AccordionStateContext.Provider value={[state, internalAccordionID.current]}>
             <AccordionDispatchContext.Provider value={[dispatch, handleFocusKey, handleExpand]}>
-                <div {...props}>
-                    {children}
-                </div>
+                {children}
             </AccordionDispatchContext.Provider>
         </AccordionStateContext.Provider>
     )
@@ -102,17 +99,11 @@ function internalReducer(state, action) {
         case 'setExpandState': {
             return {...state, opened: action.opened}
         }
-
     }
 }
 
-function AccordionButton({accordionIndex, ...props}, ref) {
+function AccordionButton({accordionIndex, className, activeClassName, ...props}) {
     const buttonRef = useRef();
-    useImperativeHandle(ref, () => ({
-        focus: () => {
-            buttonRef.current.focus()
-        }
-    }))
     const [state, accordionID] = useAccordionState();
     const [dispatch, handleFocusKey, handleExpand] = useAccordionDispatch();
     useEffect(() => {
@@ -153,18 +144,19 @@ function AccordionButton({accordionIndex, ...props}, ref) {
     }
     return (
         <button
+            type="button"
             ref={buttonRef}
             onClick={handleButtonTrigger}
             onKeyDown={handleKeyDown}
             id={`accordion-button-${accordionID}-${accordionIndex}`}
             aria-controls={`accordion-content-${accordionID}-${accordionIndex}`}
+            className={state.opened.includes(accordionIndex) && activeClassName && activeClassName.length? activeClassName: className}
             {...props}
         />
     )
 }
-AccordionButton = forwardRef(AccordionButton)
 
-function AccordionContent({accordionIndex, ...props}) {
+function AccordionContent({accordionIndex, className, activeClassName, ...props}) {
     const [state, accordionID] = useAccordionState();
     return (
         <div 
@@ -172,6 +164,7 @@ function AccordionContent({accordionIndex, ...props}) {
             id={`accordion-content-${accordionID}-${accordionIndex}`}
             aria-labelledby={`accordion-button-${accordionID}-${accordionIndex}`}
             hidden={state.opened.includes(accordionIndex)? undefined: true}
+            className={(state.opened.includes(accordionIndex) && activeClassName && activeClassName.length)? activeClassName: className}
             {...props}
         />
     )
@@ -194,8 +187,7 @@ function AccordionDemo() {
                     </div>
                 </div>
                 <AccordionContent accordionIndex={3}>4 Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc sagittis nunc a nisi blandit, non blandit risus maximus. Maecenas laoreet est quam, ac sollicitudin sem consectetur nec. Aenean accumsan blandit felis quis interdum. Fusce pellentesque luctus pharetra. Nullam efficitur nulla sit amet pellentesque cursus. Ut blandit dictum neque, ut laoreet sem accumsan sit amet. Vestibulum imperdiet libero mi, hendrerit lacinia nunc euismod quis. Curabitur consequat, tortor ac tempor euismod, lacus mi vulputate libero, ac consequat lacus justo vitae ex. Vivamus eu orci non sem ultricies faucibus a vel libero. Ut purus orci, ultrices ut mi at, finibus bibendum nibh. Vivamus vulputate enim interdum dui tristique euismod. Donec quis lobortis sem, eget commodo lorem. Nunc sapien dolor, rhoncus et vehicula elementum, convallis sit amet turpis.</AccordionContent>
-            </div>
-            
+            </div>       
         </Accordion>
     )
 }
