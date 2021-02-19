@@ -1,29 +1,47 @@
 import React, { useEffect, useRef, createContext, useContext, useReducer } from 'react'
 
+/**
+ * accordionNextID is used to assign a global unique id for accordion children component
+ */
 let accordionNextID = 0;
 
+/**
+ * next and previous are flags to identify user's arrow key action,
+ * first and last are flags to identify when user press __home__ and __end__ on keyboard
+ */
 const FocusFlag_Next = 1;
 const FocusFlag_Previous = 2;
 const FocusFlag_First = 3;
 const FocusFlag_Last = 4;
 
 function Accordion({
+    // this value is for initializing only, change value after render will not take effects
     defaultExpandedIndex = [],
-    // allow open multiple entries at the same time
+
+    // allow users to open multiple accordion at the same time
     multiple=false,
 
-    // allow toggle the content
+    // allow users to click the opened button to close the accordion
     toggle=false,
     children,
 }) {
     const internalAccordionID = useRef(accordionNextID++);
-    const [state, dispatch] = useReducer(internalReducer, {count: 0, refs: {}, opened: defaultExpandedIndex});
+
+    const [state, dispatch] = useReducer(internalAccordionReducer, {
+        // count is how many accordion buttons in this accordion
+        count: 0,
+        // refs will look like this when finished {1: button1ref, 2: button2Ref, 4: button4ref}
+        refs: {},
+        // opened will hold the opened accordion index in a array
+        opened: defaultExpandedIndex
+    });
     
-    // handle search the next ref with next accordion index, allow dynamic add and remove accordion item
+
     function handleFocusKey(currentIndex, focusFlag) {
         const initialIndex = currentIndex
         switch (focusFlag) {
             case FocusFlag_Next: {
+                // because accordion can be dynamic removed, so we search the next accordionIndex
                 while (!state.refs[++currentIndex] && currentIndex < state.count) {}
             } break;
             case FocusFlag_Previous: {
@@ -36,6 +54,8 @@ function Accordion({
                 currentIndex = state.count - 1
             } break;
         }
+        // this prevents from focusing on element when element is already being focused,
+        // e.g. press up when focus on the first accordion button
         if (initialIndex !== currentIndex) {
             if (state.refs[currentIndex] && state.refs[currentIndex].current) {
                 state.refs[currentIndex].current.focus()
@@ -84,7 +104,7 @@ function useAccordionState() {
     return context;
 }
 
-function internalReducer(state, action) {
+function internalAccordionReducer(state, action) {
     switch(action.type) {
         case 'addRef': {
             const tempRefs = {...state.refs}
@@ -106,6 +126,7 @@ function AccordionButton({accordionIndex, className, activeClassName, ...props})
     const buttonRef = useRef();
     const [state, accordionID] = useAccordionState();
     const [dispatch, handleFocusKey, handleExpand] = useAccordionDispatch();
+    // when mounted, we send the ref to context
     useEffect(() => {
         dispatch({type: 'addRef', ref: buttonRef, accordionIndex})
         return () => {
@@ -116,13 +137,13 @@ function AccordionButton({accordionIndex, className, activeClassName, ...props})
     function handleButtonTrigger() {
         handleExpand(accordionIndex);
     }
-    // arrow key to focus different header, space or enter to expand
+
+    // arrow key to focus different button, space or enter to expand
     function handleKeyDown(event) {
         const key = event.key;
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp': {
-                // focus on previous button
                 handleFocusKey(accordionIndex, FocusFlag_Previous)
             } break;
             case 'ArrowDown':
@@ -136,7 +157,6 @@ function AccordionButton({accordionIndex, className, activeClassName, ...props})
                 handleFocusKey(accordionIndex, FocusFlag_Last)
             } break;
             case ' ': {
-                // @todo prevent button default space event
                 event.preventDefault();
                 handleButtonTrigger();
             } break;
