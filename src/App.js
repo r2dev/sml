@@ -6,7 +6,7 @@ import {Accordion, AccordionButton, AccordionContent} from './react/Accordion';
 
 function AccordionDemo() {
   return (
-      <Accordion toggle={true} multiple={true}>
+      <Accordion toggle={true} multiple={true} defaultExpandedIndex={[0, 1]}>
         <div className="accordion" id="accordionExample" style={{width: 300}}>
           <div className="accordion-item">
             <AccordionButton className="accordion-button collapsed" activeClassName="accordion-button" accordionIndex={0}>1</AccordionButton>

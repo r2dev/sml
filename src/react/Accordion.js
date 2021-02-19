@@ -8,7 +8,7 @@ const FocusFlag_First = 3;
 const FocusFlag_Last = 4;
 
 function Accordion({
-    defaultExpandedIndex = [0],
+    defaultExpandedIndex = [],
     // allow open multiple entries at the same time
     multiple=false,
 
