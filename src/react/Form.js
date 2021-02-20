@@ -95,8 +95,16 @@ function FormError() {
 
 function FormDemo(props) {
 	return(
-		<Form onSubmit={event => console.log(event)} initialValue={{firstname: ''}}>
-			<InputField name="firstname"></InputField>
+		<Form onSubmit={event => console.log(event)} initialValue={{firstname: '', lastname: ''}}>
+			<div>
+				<label htmlFor="firstname">First Name</label>
+				<InputField name="firstname" id="firstname" type="text"></InputField>
+			</div>
+			<div>
+				<label htmlFor="lastname">Last Name</label>
+				<InputField name="lastname" id="lastname" type="text"></InputField>
+			</div>
+		
 			<button>submit</button>
 		</Form>
 	)
