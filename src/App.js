@@ -11,12 +11,12 @@ function AccordionDemo() {
   }
   return (
       <Accordion expandedItems={state} setExpandedItems={handleExpanded}>
-          <AccordionItem renderButton={"1"}>11111111111</AccordionItem>
-          <AccordionItem renderButton={({active}) => <div>{active? "2+": "2"}</div>}>2222222</AccordionItem>
-          <AccordionItem renderButton={<div>3</div>}>33333333333333</AccordionItem>
-          <AccordionItem renderButton={"4"}>44444444444</AccordionItem>
-          <AccordionItem renderButton={"5"}>5555</AccordionItem>
-          <AccordionItem renderButton={"6"}>6</AccordionItem>
+          <AccordionItem buttonContent={"1"}>11111111111</AccordionItem>
+          <AccordionItem buttonContent={({active}) => <div>{active? "2+": "2"}</div>}>2222222</AccordionItem>
+          <AccordionItem buttonContent={<div>3</div>}>33333333333333</AccordionItem>
+          <AccordionItem buttonContent={"4"}>44444444444</AccordionItem>
+          <AccordionItem buttonContent={"5"}>5555</AccordionItem>
+          <AccordionItem buttonContent={"6"}>6</AccordionItem>
       </Accordion>
       
   )

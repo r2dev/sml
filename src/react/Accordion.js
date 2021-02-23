@@ -51,35 +51,31 @@ function Accordion({
 
     return (<div onKeyDown={handleKeyDown} {...props}>
         {React.Children.map(children, (child, index) => (
-            React.cloneElement(child, {accordionID: accordionID.current, accordionIndex: index, expandedItems, setExpandedItems})
+            React.cloneElement(child, {_accordionID: accordionID.current, _accordionIndex: index, expandedItems, setExpandedItems})
         ))}
     </div>)
 }
 
-function AccordionItem({renderButton, children, ...props}) {
+function AccordionItem({buttonContent, children, _accordionIndex, _accordionID, ...props}) {
     function handleButtonClick() {
-        props.setExpandedItems(props.accordionIndex);
+        props.setExpandedItems(_accordionIndex);
     }
     return (
         <>
             <button
                 type="button"
                 onClick={handleButtonClick}
-                id={`accordion-button-${props.accordionID}-${props.accordionIndex}`}
-                aria-controls={`accordion-content-${props.accordionID}-${props.accordionIndex}`}
-                data-focus-index={props.accordionIndex}
+                id={`accordion-button-${_accordionID}-${_accordionIndex}`}
+                aria-controls={`accordion-content-${_accordionID}-${_accordionIndex}`}
+                data-focus-index={_accordionIndex}
             >
-                {
-                React.isValidElement(renderButton)? 
-                    React.cloneElement(renderButton):
-                    typeof renderButton === 'function'? renderButton({active: props.expandedItems.includes(props.accordionIndex)}): renderButton
-                    }
+                {typeof buttonContent === 'function'? buttonContent({active: props.expandedItems.includes(_accordionIndex)}): buttonContent }
             </button>
             <div 
                 role="region"
-                id={`accordion-content-${props.accordionID}-${props.accordionIndex}`}
-                aria-labelledby={`accordion-button-${props.accordionID}-${props.accordionIndex}`}
-                hidden={props.expandedItems.includes(props.accordionIndex)? undefined: true}
+                id={`accordion-content-${_accordionID}-${_accordionIndex}`}
+                aria-labelledby={`accordion-button-${_accordionID}-${_accordionIndex}`}
+                hidden={props.expandedItems.includes(_accordionIndex)? undefined: true}
             >
                 {children}
             </div>
