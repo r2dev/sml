@@ -1,12 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {ModalDemo } from './react/Modal';
 import DateInput from './react/DateInput';
 import "./App.css"
 import {Accordion, AccordionButton, AccordionContent} from './react/Accordion';
 
 function AccordionDemo() {
+  const [expandState, setExpandState] = useState([1])
+  function handleExpand(index) {
+
+    /** demo allow only one accordion to be opened and click again to close*/
+    // if (expandState.includes(index)) {
+    //   setExpandState([])
+    // } else {
+    //   setExpandState([index])
+    // }
+///////////////////////////
+    /** demo allow multiple accordions to be opened and click again to close */ 
+    if (expandState.includes(index)) {
+      setExpandState(expandState.filter((v) => v != index))
+    } else {
+      setExpandState(expandState.concat(index))
+    }
+////////////////////////////
+
+    /** demo allow only one to be opened and click another one to close */ 
+    // if (expandState.includes(index)) {
+    // } else {
+    //   setExpandState([index])
+    // }
+
+    
+    
+  }
   return (
-      <Accordion toggle={true} multiple={true} defaultExpandedIndex={[0, 1]}>
+      <Accordion expandedItems={expandState} onExpand={handleExpand}>
         <div className="accordion" id="accordionExample" style={{width: 300}}>
           <div className="accordion-item">
             <AccordionButton className="accordion-button collapsed" activeClassName="accordion-button" accordionIndex={0}>1</AccordionButton>
