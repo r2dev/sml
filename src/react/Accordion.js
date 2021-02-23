@@ -69,7 +69,7 @@ function AccordionItem({buttonContent, children, _accordionIndex, _accordionID, 
                 aria-controls={`accordion-content-${_accordionID}-${_accordionIndex}`}
                 data-focus-index={_accordionIndex}
             >
-                {typeof buttonContent === 'function'? buttonContent({active: props.expandedItems.includes(_accordionIndex)}): buttonContent }
+                {buttonContent}
             </button>
             <div 
                 role="region"
