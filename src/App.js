@@ -3,6 +3,7 @@ import {ModalDemo } from './react/Modal';
 import DateInput from './react/DateInput';
 import "./App.css"
 import {Accordion, AccordionButton, AccordionContent} from './react/Accordion';
+import { Link, Route, Router } from './react/Router';
 
 function AccordionDemo() {
   const [expandState, setExpandState] = useState([1])
@@ -75,22 +76,39 @@ function AccordionDemo() {
 function App() {
   return (
     <>
-    <div>
-      <h2>Modal(dialog)</h2>
-      <ModalDemo />
-    </div>
-    <hr />
-    <div>
-      <h2>Accordion</h2>
-      <AccordionDemo />
-    </div>
-    <hr />
-    <div>
-      <h2>experiment</h2>
-      <hr />
-      <h3>Date input with calendar</h3>
-      <DateInput />
-    </div>
+    <Router>
+      <Link to="/">Home</Link>
+      <Link to="/modal">Modal</Link>
+      <Link to="/accordion">Accordion</Link>
+      <Link to="/router">Router</Link>
+      <Link to="/experiment">Experiment</Link>
+      <Route path='/'>
+        <h1>sml - small library</h1>
+        <p>This library is focus on reuseable, customization for everyday front end work.</p>
+        <p>reuseable: every component is under one file only, just copy the source code into your project, no npm/yarn install</p>
+        <p>customization: you own the source code, so change if you need</p>
+        <p><b>under development</b></p>
+      </Route>
+      <Route path='/modal'>
+        <h1>Modal(dialog)</h1>
+        <ModalDemo />
+      </Route>
+     
+      <Route path='/accordion'>
+        <h1>Accordion</h1>
+        <AccordionDemo />
+      </Route>
+      
+      <Route path='/experiment'>
+        <h1>experiment</h1>
+          <h3>Date input with calendar</h3>
+          <DateInput />
+      </Route>
+      <Route path='/router'>
+        <h1>Router</h1>
+        <p>to do</p>
+      </Route>
+    </Router>
     </>
   )
 }
