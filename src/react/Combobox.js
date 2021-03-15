@@ -45,10 +45,4 @@ function ComboboxInput(props) {
     return <input type="text" onChange={handleInputChange} value={inputValue} {...props}/>
 }
 
-function Demo() {
-    return <Combobox>
-        <ComboboxInput></ComboboxInput>
-    </Combobox>
-}
-
-export {Combobox, Demo}
+export {Combobox, ComboboxInput}

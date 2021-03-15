@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import {ModalDemo } from './react/Modal';
 import DateInput from './react/DateInput';
 import "./App.css"
-import {Demo} from './react/Combobox';
+import {Combobox, ComboboxInput, Demo} from './react/Combobox';
 import {Accordion, AccordionButton, AccordionContent} from './react/Accordion';
 
 function AccordionDemo() {
@@ -29,9 +29,6 @@ function AccordionDemo() {
     // } else {
     //   setExpandState([index])
     // }
-
-    
-    
   }
   return (
       <Accordion expandedItems={expandState} onExpand={handleExpand}>
@@ -94,7 +91,9 @@ function App() {
     </div>
     <div>
       <h2>Combobox</h2>
-      <Demo />
+      <Combobox>
+        <ComboboxInput></ComboboxInput>
+    </Combobox>
     </div>
     </>
   )
