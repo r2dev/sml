@@ -82,7 +82,7 @@ function App() {
       <Link to="/accordion">Accordion</Link>
       <Link to="/router">Router</Link>
       <Link to="/experiment">Experiment</Link>
-      <Route path='/'>
+      <Route home>
         <h1>sml - small library</h1>
         <p>This library is focus on reuseable, customization for everyday front end work.</p>
         <p>reuseable: every component is under one file only, just copy the source code into your project, no npm/yarn install</p>
@@ -98,16 +98,19 @@ function App() {
         <h1>Accordion</h1>
         <AccordionDemo />
       </Route>
-      
-      <Route path='/experiment'>
-        <h1>experiment</h1>
-          <h3>Date input with calendar</h3>
-          <DateInput />
-      </Route>
       <Route path='/router'>
         <h1>Router</h1>
         <p>to do</p>
       </Route>
+      <Route path='/experiment'>
+        <Link to="calendar-input">Calendar Input</Link>
+        <h1>experiment</h1>
+        <Route path='calendar-input'>
+          <h3>Date input with calendar</h3>
+          <DateInput />
+          </Route>
+      </Route>
+     
     </Router>
     </>
   )

@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useContext, createContext } from 'react'
+import React, { useEffect, useState, useContext, createContext, useMemo } from 'react'
 
 const RouterStateContext = createContext();
 const RouterDispatchContext = createContext();
+const RouterNestStateContext = createContext();
 
 function useRouterDispatch() {
     const context = useContext(RouterDispatchContext);
@@ -16,6 +17,10 @@ function useRouterState() {
         throw new Error('useRouterState must be used within Router')
     }
     return context;
+}
+function useRouterNestState() {
+  const context = useContext(RouterNestStateContext);
+  return context;
 }
 
 const history = window.history;
@@ -43,20 +48,44 @@ function Router({children}) {
   );
 }
 
-function Route({path, children, ...props}) {
+
+
+function Route({path, children, home=false, ...props}) {
   const location = useRouterState();
-  return (path === location.pathname) ? children: null
+  const parentPath = useRouterNestState();
+  const pathname = useMemo(() => {
+    let result = '';
+    if (path?.[0] === '/') {
+      result = path;
+    } else {
+      result = parentPath + '/' + path;
+    }
+    if (result.length > 0 && result[result.length - 1] === '/') {
+      result = result.slice(-1);
+    }
+    return result;
+  }, [path])
+
+  return <RouterNestStateContext.Provider value={pathname}>
+      {((home && pathname === '') || location.pathname.startsWith(pathname)) ? children: null}
+    </RouterNestStateContext.Provider>
 }
 
 function Link({to, replace=false, ...props}) {
   const [handlePushStateEvent] = useRouterDispatch();
   function handleClick(event) {
     event.preventDefault();
-    handlePushStateEvent({pathname: to})
-    if (replace) {
-      history.replaceState({}, '', to)
+    let pathname = '';
+    if (to?.[0] === '/') {
+      pathname = to;
     } else {
-      history.pushState({}, '', to)
+      pathname = document.location.pathname + '/' + to;
+    }
+    handlePushStateEvent({pathname: pathname})
+    if (replace) {
+      history.replaceState({}, '', pathname)
+    } else {
+      history.pushState({}, '', pathname)
     }
     return false;
   }
