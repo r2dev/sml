@@ -48,9 +48,7 @@ function Router({children}) {
   );
 }
 
-
-
-function Route({path, children, home=false, ...props}) {
+function Route({path, children, ...props}) {
   const location = useRouterState();
   const parentPath = useRouterNestState();
   const pathname = useMemo(() => {
@@ -61,13 +59,13 @@ function Route({path, children, home=false, ...props}) {
       result = parentPath + '/' + path;
     }
     if (result.length > 0 && result[result.length - 1] === '/') {
-      result = result.slice(-1);
+      result = result.slice(0, -1);
     }
     return result;
-  }, [path])
+  }, [path, parentPath])
 
   return <RouterNestStateContext.Provider value={pathname}>
-      {((home && pathname === '') || location.pathname.startsWith(pathname)) ? children: null}
+      {((pathname === '' && window.location.pathname === '/') || (pathname !== '' && location.pathname.startsWith(pathname))) ? children: null}
     </RouterNestStateContext.Provider>
 }
 
