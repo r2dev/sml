@@ -27,10 +27,11 @@ const history = window.history;
 
 function Router({children}) {
   const [state, setState] = useState({pathname: document.location.pathname});
+  
   function handlePushStateEvent(location) {
-    setState(location);
+    setState({pathname: location.pathname});
   }
-  function handlePopStateEvent(event) {
+  function handlePopStateEvent() {
     setState({pathname: document.location.pathname});
   }
   useEffect(() => {
@@ -63,9 +64,17 @@ function Route({path, children, ...props}) {
     }
     return result;
   }, [path, parentPath])
+  
+  const isShowing = useMemo(() => {
+    let result = false
+    if ((pathname === '' && window.location.pathname === '/') || (pathname !== '' && location.pathname.startsWith(pathname))) {
+      result = true;
+    }
+    return result;
+  }, [pathname, window.location.pathname, location.pathname])
 
   return <RouterNestStateContext.Provider value={pathname}>
-      {((pathname === '' && window.location.pathname === '/') || (pathname !== '' && location.pathname.startsWith(pathname))) ? children: null}
+      {(isShowing) ? children: null}
     </RouterNestStateContext.Provider>
 }
 
