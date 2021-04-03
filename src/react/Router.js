@@ -66,8 +66,23 @@ function Route({path, children, ...props}) {
   }, [path, parentPath])
   
   const isShowing = useMemo(() => {
+    let rootPath = false;
+    if (pathname === '' && window.location.pathname === '/') {
+      rootPath = true;
+    }
+
+    let matchParent = false;
+    if (pathname !== '' && location.pathname.startsWith(pathname)) {
+      matchParent = true;
+    }
+
+    let matchExact = false;
+    if (pathname !== '' && location.pathname === pathname) {
+      matchExact = true;
+    }
+
     let result = false
-    if ((pathname === '' && window.location.pathname === '/') || (pathname !== '' && location.pathname.startsWith(pathname))) {
+    if (rootPath || matchExact || matchParent) {
       result = true;
     }
     return result;
