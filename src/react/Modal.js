@@ -5,14 +5,10 @@ import ReactDOM from 'react-dom'
 function Modal({initialFocusRef, handleClose=(()=>{}), ...props}) {
     const modalElement = useRef();
 
-    // focus trap hidden element
-    const focusStartElement = useRef();
-    const focusEndElement = useRef();
-
     const firstFocusElement = useRef();
     const lastFocusElement = useRef();
 
-    const focusOnLastElement = function() {
+    const focusLastElement = function() {
         if (lastFocusElement.current) {
             lastFocusElement.current.focus();
         } else {
@@ -91,11 +87,11 @@ function Modal({initialFocusRef, handleClose=(()=>{}), ...props}) {
 
     return  (
         <>
-            <div tabIndex={0} ref={focusStartElement} onFocus={focusOnLastElement} aria-hidden></div>
+            <div tabIndex={0} onFocus={focusLastElement} aria-hidden></div>
                 <div ref={modalElement} role={'dialog'} aria-modal {...props}>
                     {props.children}
                 </div>
-            <div tabIndex={0} ref={focusEndElement} onFocus={focusFirstElement} aria-hidden></div>
+            <div tabIndex={0} onFocus={focusFirstElement} aria-hidden></div>
         </>
     )
 }
